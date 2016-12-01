@@ -67,3 +67,6 @@ public class MyApplication extends Application implements ConnectionHub {
 - getPhoto() returns base64 of png image .
 - getPath() returns path of image in device.  
 - you can get Uri of image with such away `Uri uri = Uri.parse(shooterModel.getPath())`;
+
+#Example
+<img src="https://github.com/gardencoder/shooter/raw/master/screenshot/img1.png" width="300px" height="532px" />
