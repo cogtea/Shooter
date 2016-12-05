@@ -1,12 +1,13 @@
 package com.gardencoder.shooter;
 
+import android.content.pm.PackageManager;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 
 import com.gardencoder.shooter.board.ShooterEventListener;
 
 
-public class ShooterAppCompactActivity extends AppCompatActivity  {
+public class ShooterAppCompactActivity extends AppCompatActivity {
     private ShooterEventListener shooterEventListener;
 
     @Override
@@ -25,5 +26,11 @@ public class ShooterAppCompactActivity extends AppCompatActivity  {
     protected void onResume() {
         super.onResume();
         shooterEventListener.onResume();
+    }
+
+    @Override
+    public void onRequestPermissionsResult(int requestCode,
+                                           String permissions[], int[] grantResults) {
+        shooterEventListener.onRequestPermissionsResult(requestCode, permissions, grantResults);
     }
 }

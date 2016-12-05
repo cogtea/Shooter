@@ -26,4 +26,10 @@ public class ShooterActivity extends Activity {
         super.onResume();
         shooterEventListener.onResume();
     }
+
+    @Override
+    public void onRequestPermissionsResult(int requestCode,
+                                           String permissions[], int[] grantResults) {
+        shooterEventListener.onRequestPermissionsResult(requestCode, permissions, grantResults);
+    }
 }

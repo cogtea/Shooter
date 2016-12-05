@@ -1,14 +1,19 @@
 package com.gardencoder.shooter.board;
 
+import android.Manifest;
 import android.app.Activity;
 import android.content.Intent;
+import android.content.pm.PackageManager;
 import android.graphics.Bitmap;
 import android.hardware.Sensor;
 import android.hardware.SensorEvent;
 import android.hardware.SensorEventListener;
 import android.hardware.SensorManager;
 import android.net.Uri;
+import android.os.Build;
 import android.os.Environment;
+import android.support.v4.app.ActivityCompat;
+import android.support.v4.content.ContextCompat;
 import android.view.View;
 
 import com.gardencoder.shooter.utilites.Tools;
@@ -23,17 +28,72 @@ import static android.content.Context.SENSOR_SERVICE;
 public class ShooterEventListener implements SensorEventListener {
     public static final int UPDATE_TIME_FREQUENCY = 100;
     private static final int SHAKE_THRESHOLD = 800;
+    private static final int MY_PERMISSIONS_REQUEST_STORAGE = 4010;
     private final Sensor sensor;
     private SensorManager sensorManager;
     private long lastUpdate;
     private float x, y, z;
     private float last_x, last_y, last_z;
     private Activity activity;
+    private boolean isPermissionGranted = false;
 
     public ShooterEventListener(Activity activity) {
         this.activity = activity;
         sensorManager = (SensorManager) activity.getSystemService(SENSOR_SERVICE);
         sensor = sensorManager.getDefaultSensor(Sensor.TYPE_ACCELEROMETER);
+
+    }
+
+    public void onRequestPermissionsResult(int requestCode,
+                                           String permissions[], int[] grantResults) {
+        switch (requestCode) {
+            case MY_PERMISSIONS_REQUEST_STORAGE: {
+                // If request is cancelled, the result arrays are empty.
+                if (grantResults.length > 0
+                        && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
+                    isPermissionGranted = true;
+                } else {
+                    isPermissionGranted = false;
+                }
+                return;
+            }
+
+            // other 'case' lines to check for other
+            // permissions this app might request
+        }
+    }
+
+    private void requestPermission() {
+        // Assume thisActivity is the current activity
+        if (ContextCompat.checkSelfPermission(activity,
+                Manifest.permission.WRITE_EXTERNAL_STORAGE)
+                != PackageManager.PERMISSION_GRANTED) {
+
+            // Should we show an explanation?
+            if (ActivityCompat.shouldShowRequestPermissionRationale(activity,
+                    Manifest.permission.WRITE_EXTERNAL_STORAGE)) {
+
+                // Show an explanation to the user *asynchronously* -- don't block
+                // this thread waiting for the user's response! After the user
+                // sees the explanation, try again to request the permission.
+                ActivityCompat.requestPermissions(activity,
+                        new String[]{Manifest.permission.WRITE_EXTERNAL_STORAGE},
+                        MY_PERMISSIONS_REQUEST_STORAGE);
+            } else {
+
+                // No explanation needed, we can request the permission.
+
+                ActivityCompat.requestPermissions(activity,
+                        new String[]{Manifest.permission.WRITE_EXTERNAL_STORAGE},
+                        MY_PERMISSIONS_REQUEST_STORAGE);
+
+                // MY_PERMISSIONS_REQUEST_READ_CONTACTS is an
+                // app-defined int constant. The callback method gets the
+                // result of the request.
+            }
+        }else{
+            sensorManager.registerListener(this, sensor, UPDATE_TIME_FREQUENCY);
+        }
     }
 
     @Override
@@ -95,6 +155,7 @@ public class ShooterEventListener implements SensorEventListener {
         }
     }
 
+
     private void openScreenshot(File imageFile) {
         Intent intent = new Intent(activity, ShooterDrawingActivity.class);
         Uri uri = Uri.fromFile(imageFile);
@@ -110,7 +171,15 @@ public class ShooterEventListener implements SensorEventListener {
 
     public void onResume() {
         if (Tools.isScreenshot) {
-            sensorManager.registerListener(this, sensor, UPDATE_TIME_FREQUENCY);
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M && !isPermissionGranted) {
+                //
+                requestPermission();
+                //
+            } else {
+                isPermissionGranted = true;
+                sensorManager.registerListener(this, sensor, UPDATE_TIME_FREQUENCY);
+            }
+            //
         }
     }
 }
