@@ -10,7 +10,7 @@ Download
 <dependency>
   <groupId>com.gardencoder.shooter</groupId>
   <artifactId>shooter</artifactId>
-  <version>1.0.0</version>
+  <version>1.0.1</version>
   <type>pom</type>
 </dependency>
 ```
@@ -27,7 +27,7 @@ buildscript {
   }
 }
 
-compile 'com.gardencoder.shooter:shooter:1.0.0@aar'
+compile 'com.gardencoder.shooter:shooter:1.0.1@aar'
 ```
 
 Install
