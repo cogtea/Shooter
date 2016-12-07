@@ -10,7 +10,7 @@ Download
 <dependency>
   <groupId>com.gardencoder.shooter</groupId>
   <artifactId>shooter</artifactId>
-  <version>1.0.1</version>
+  <version>1.0.2</version>
   <type>pom</type>
 </dependency>
 ```
@@ -27,7 +27,7 @@ buildscript {
   }
 }
 
-compile 'com.gardencoder.shooter:shooter:1.0.1@aar'
+compile 'com.gardencoder.shooter:shooter:1.0.2'
 ```
 
 Install
@@ -70,3 +70,14 @@ public class MyApplication extends Application implements ConnectionHub {
 
 #Example
 <img src="https://github.com/gardencoder/shooter/raw/master/screenshot/img1.png" width="300px" height="532px" />
+
+Android API 24 <a href="https://developer.android.com/reference/android/support/v4/content/FileProvider.html">File Provider</a>
+--------
+you have add `file-path` with path `screenshots` in your `filepaths.xml` according to your fileprovider in your manifest : 
+```xml
+<files-path
+        name="screenshots"
+        path="screenshots/" />
+```
+Otherwise will throw error <a href="https://developer.android.com/reference/java/lang/IllegalArgumentException.html" >IllegalArgumentException</a> with Android 7.0 Nougat .
+
