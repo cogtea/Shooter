@@ -27,7 +27,7 @@ import static android.content.Context.SENSOR_SERVICE;
 
 public class ShooterEventListener implements SensorEventListener {
     public static final int UPDATE_TIME_FREQUENCY = 100;
-    private static final int SHAKE_THRESHOLD = 800;
+    private static final int SHAKE_THRESHOLD = 2000;
     private static final int MY_PERMISSIONS_REQUEST_STORAGE = 4010;
     private final Sensor sensor;
     private SensorManager sensorManager;
@@ -91,7 +91,7 @@ public class ShooterEventListener implements SensorEventListener {
                 // app-defined int constant. The callback method gets the
                 // result of the request.
             }
-        }else{
+        } else {
             sensorManager.registerListener(this, sensor, UPDATE_TIME_FREQUENCY);
         }
     }
@@ -134,7 +134,12 @@ public class ShooterEventListener implements SensorEventListener {
         Date now = new Date();
         android.text.format.DateFormat.format("yyyy-MM-dd_hh:mm:ss", now);
         try {
-            String mPath = Environment.getExternalStorageDirectory().toString() + "/" + now + ".jpg";
+            File screensDir = new File(activity.getFilesDir().toString() + "/screenshots/");
+            if (!screensDir.exists()) {
+                screensDir.mkdir();
+            }
+            //
+            String mPath = activity.getFilesDir().toString() + "/screenshots/" + now + ".jpg";
             View v1 = activity.getWindow().getDecorView().getRootView();
             v1.setDrawingCacheEnabled(true);
             Bitmap bitmap = Bitmap.createBitmap(v1.getDrawingCache());
@@ -160,6 +165,8 @@ public class ShooterEventListener implements SensorEventListener {
         Intent intent = new Intent(activity, ShooterDrawingActivity.class);
         Uri uri = Uri.fromFile(imageFile);
         intent.putExtra(ShooterDrawingActivity.SCREEN_SHOT, uri.toString());
+        intent.putExtra(ShooterDrawingActivity.SCREEN_SHOT_PATH, imageFile.getPath());
+
         intent.putExtra(ShooterDrawingActivity.ACTIVITY_NAME, this.getClass().getName());
         activity.startActivity(intent);
     }

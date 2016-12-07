@@ -2,7 +2,7 @@ apply plugin: 'com.android.library'
 apply plugin: 'com.jfrog.bintray'
 apply plugin: 'com.github.dcendents.android-maven'
 group = 'com.gardencoder.shooter'
-version = '1.0.0'
+version = '1.0.1'
 android {
     compileSdkVersion 25
     buildToolsVersion "24.0.2"
@@ -70,7 +70,7 @@ bintray {
             name = 'Library' // the name of your library project
             desc = 'Screenshot simple library'
             released  = new Date()
-            vcsTag = '1.0.0' // the version
+            vcsTag = '1.0.1' // the version
         }
 
         licenses = ['Apache-2.0']

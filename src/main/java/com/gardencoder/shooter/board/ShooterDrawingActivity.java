@@ -45,6 +45,7 @@ public class ShooterDrawingActivity extends AppCompatActivity implements View.On
 
     public static final String SCREEN_SHOT = "screen_shot";
     public static final String ACTIVITY_NAME = "activity";
+    public static final String SCREEN_SHOT_PATH = "path";
     private FloatingActionButton redBtn, orangeBtn, greenBtn;
     private LinearLayout drawLayout;
     private Paint mPaint;
@@ -55,6 +56,7 @@ public class ShooterDrawingActivity extends AppCompatActivity implements View.On
     private FloatingActionButton send;
     private String activtyName;
     private String path = "";
+    private String pathStr;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -93,6 +95,8 @@ public class ShooterDrawingActivity extends AppCompatActivity implements View.On
         //
         if (getIntent().getExtras() != null) {
             path = getIntent().getStringExtra(SCREEN_SHOT);
+            pathStr = getIntent().getStringExtra(SCREEN_SHOT_PATH);
+
             Uri uri = Uri.parse(getIntent().getStringExtra(SCREEN_SHOT));
             activtyName = getIntent().getStringExtra(ACTIVITY_NAME);
             File f = new File(getRealPathFromURI(uri));
@@ -157,7 +161,7 @@ public class ShooterDrawingActivity extends AppCompatActivity implements View.On
             } catch (Throwable e) {
                 Log.d("error", e.getMessage());
             }
-            new ImageBase64(Tools.QUALITY, path).execute(bitmap);
+            new ImageBase64(Tools.QUALITY, pathStr).execute(bitmap);
         }
     }
 
