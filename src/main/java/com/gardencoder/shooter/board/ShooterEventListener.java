@@ -11,7 +11,6 @@ import android.hardware.SensorEventListener;
 import android.hardware.SensorManager;
 import android.net.Uri;
 import android.os.Build;
-import android.os.Environment;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.content.ContextCompat;
 import android.view.View;
@@ -49,12 +48,8 @@ public class ShooterEventListener implements SensorEventListener {
         switch (requestCode) {
             case MY_PERMISSIONS_REQUEST_STORAGE: {
                 // If request is cancelled, the result arrays are empty.
-                if (grantResults.length > 0
-                        && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
-                    isPermissionGranted = true;
-                } else {
-                    isPermissionGranted = false;
-                }
+                isPermissionGranted = grantResults.length > 0
+                        && grantResults[0] == PackageManager.PERMISSION_GRANTED;
                 return;
             }
 

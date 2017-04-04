@@ -4,7 +4,7 @@ import com.gardencoder.shooter.models.ShooterModel;
 
 public interface ConnectionHub {
 
-    public String getUserAccessToken();
+    String getUserAccessToken();
 
-    public boolean sendScreenShot(ShooterModel screenshot);
+    boolean sendScreenShot(ShooterModel screenshot);
 }

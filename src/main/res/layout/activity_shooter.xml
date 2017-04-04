@@ -21,10 +21,10 @@
             android:id="@+id/draw_layout"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:orientation="vertical"
-            android:layout_alignParentTop="true"
             android:layout_alignParentLeft="true"
-            android:layout_alignParentStart="true">
+            android:layout_alignParentStart="true"
+            android:layout_alignParentTop="true"
+            android:orientation="vertical">
 
         </LinearLayout>
 
@@ -47,12 +47,12 @@
         android:layout_height="wrap_content"
         android:layout_alignParentBottom="true"
         android:layout_alignParentRight="true"
-        android:visibility="visible"
-        android:layout_marginRight="15dp"
         android:layout_marginBottom="215dp"
-        app:fabSize="mini"
+        android:layout_marginRight="15dp"
         android:src="@drawable/ic_brush_white_24dp"
-        app:backgroundTint="@color/colorRed" />
+        android:visibility="visible"
+        app:backgroundTint="@color/colorRed"
+        app:fabSize="mini"/>
 
     <android.support.design.widget.FloatingActionButton
         android:id="@+id/orange"
@@ -60,12 +60,12 @@
         android:layout_height="wrap_content"
         android:layout_alignParentBottom="true"
         android:layout_alignParentRight="true"
-        android:visibility="visible"
-        android:layout_marginRight="15dp"
         android:layout_marginBottom="170dp"
-        app:fabSize="mini"
+        android:layout_marginRight="15dp"
         android:src="@drawable/ic_brush_white_24dp"
-        app:backgroundTint="@color/colorOrange" />
+        android:visibility="visible"
+        app:backgroundTint="@color/colorOrange"
+        app:fabSize="mini"/>
 
     <android.support.design.widget.FloatingActionButton
         android:id="@+id/green"
@@ -73,12 +73,12 @@
         android:layout_height="wrap_content"
         android:layout_alignParentBottom="true"
         android:layout_alignParentRight="true"
-        android:visibility="visible"
+        android:layout_marginBottom="125dp"
         android:layout_marginRight="15dp"
         android:src="@drawable/ic_brush_white_24dp"
-        android:layout_marginBottom="125dp"
-        app:fabSize="mini"
-        app:backgroundTint="@color/colorGreen" />
+        android:visibility="visible"
+        app:backgroundTint="@color/colorGreen"
+        app:fabSize="mini"/>
 
     <android.support.design.widget.FloatingActionButton
         android:id="@+id/clear"
@@ -86,12 +86,12 @@
         android:layout_height="wrap_content"
         android:layout_alignParentBottom="true"
         android:layout_alignParentRight="true"
+        android:layout_marginBottom="75dp"
+        android:layout_marginRight="15dp"
         android:src="@drawable/ic_clear_white_24dp"
         android:visibility="visible"
-        app:fabSize="mini"
-        android:layout_marginRight="15dp"
-        android:layout_marginBottom="75dp"
-        app:backgroundTint="@color/gray_calender" />
+        app:backgroundTint="@color/gray_calender"
+        app:fabSize="mini"/>
 
     <android.support.design.widget.FloatingActionButton
         android:id="@+id/send"
@@ -99,11 +99,11 @@
         android:layout_height="wrap_content"
         android:layout_alignParentBottom="true"
         android:layout_alignParentRight="true"
+        android:layout_marginBottom="10dp"
+        android:layout_marginRight="10dp"
         android:src="@drawable/ic_send_white_24dp"
         android:visibility="visible"
-        app:fabSize="normal"
         app:backgroundTint="@color/colorGreen"
-        android:layout_marginRight="10dp"
-        android:layout_marginBottom="10dp" />
+        app:fabSize="normal"/>
 
 </RelativeLayout>

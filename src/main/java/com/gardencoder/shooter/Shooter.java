@@ -24,6 +24,7 @@ public class Shooter {
     public static Shooter install(Application application) {
         return new Shooter(application);
     }
+
     public static Shooter install(Activity activity) {
         return new Shooter(activity);
     }

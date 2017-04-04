@@ -12,7 +12,7 @@ import com.gardencoder.shooter.utilites.ConnectionHub;
  * Created by Ramy on 12/1/16.
  */
 
-public class MyApplication extends Application implements ConnectionHub{
+public class MyApplication extends Application implements ConnectionHub {
     @Override
     public void onCreate() {
         super.onCreate();

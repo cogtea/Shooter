@@ -2,10 +2,10 @@ apply plugin: 'com.android.library'
 apply plugin: 'com.jfrog.bintray'
 apply plugin: 'com.github.dcendents.android-maven'
 group = 'com.gardencoder.shooter'
-version = '1.0.1'
+version = '1.0.2'
 android {
     compileSdkVersion 25
-    buildToolsVersion "24.0.2"
+    buildToolsVersion "25.0.2"
 
     defaultConfig {
         minSdkVersion 11
@@ -31,9 +31,9 @@ dependencies {
     androidTestCompile('com.android.support.test.espresso:espresso-core:2.2.2', {
         exclude group: 'com.android.support', module: 'support-annotations'
     })
-    compile 'com.android.support:appcompat-v7:25.0.1'
+    compile 'com.android.support:appcompat-v7:25.3.0'
     testCompile 'junit:junit:4.12'
-    compile 'com.android.support:design:25.0.1'
+    compile 'com.android.support:design:25.3.0'
 }
 
 task generateSourcesJar(type: Jar) {
@@ -69,8 +69,8 @@ bintray {
         version {
             name = 'Library' // the name of your library project
             desc = 'Screenshot simple library'
-            released  = new Date()
-            vcsTag = '1.0.1' // the version
+            released = new Date()
+            vcsTag = '1.0.2' // the version
         }
 
         licenses = ['Apache-2.0']

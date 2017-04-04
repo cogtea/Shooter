@@ -2,9 +2,9 @@ apply plugin: 'com.android.application'
 
 
 repositories {
-        maven {
-            url 'https://dl.bintray.com/gardencode/Shooter'
-        }
+    maven {
+        url 'https://dl.bintray.com/gardencode/Shooter'
+    }
 }
 
 android {

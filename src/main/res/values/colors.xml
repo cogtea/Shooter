@@ -4,8 +4,6 @@
     <color name="colorOrange">#f1c70e</color>
     <color name="colorGreen">#0dc64e</color>
     <color name="colorPrimary">#f1f1f1</color>
-    <color name="colorAccent">#000</color>
-    <color name="colorWhite">#fff</color>
     <color name="gray_calender">#ccc</color>
 
 </resources>
