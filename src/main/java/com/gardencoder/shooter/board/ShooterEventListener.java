@@ -25,16 +25,16 @@ import static android.content.Context.SENSOR_SERVICE;
 
 
 public class ShooterEventListener implements SensorEventListener {
-    public static final int UPDATE_TIME_FREQUENCY = 100;
+    private static final int UPDATE_TIME_FREQUENCY = 100;
     private static final int SHAKE_THRESHOLD = 2000;
-    private static final int MY_PERMISSIONS_REQUEST_STORAGE = 4010;
+    public static final int MY_PERMISSIONS_REQUEST_STORAGE = 4010;
     private final Sensor sensor;
     private SensorManager sensorManager;
     private long lastUpdate;
     private float x, y, z;
     private float last_x, last_y, last_z;
     private Activity activity;
-    private boolean isPermissionGranted = false;
+    public boolean isPermissionGranted = false;
 
     public ShooterEventListener(Activity activity) {
         this.activity = activity;
@@ -50,7 +50,6 @@ public class ShooterEventListener implements SensorEventListener {
                 // If request is cancelled, the result arrays are empty.
                 isPermissionGranted = grantResults.length > 0
                         && grantResults[0] == PackageManager.PERMISSION_GRANTED;
-                return;
             }
 
             // other 'case' lines to check for other
@@ -58,7 +57,7 @@ public class ShooterEventListener implements SensorEventListener {
         }
     }
 
-    private void requestPermission() {
+    public static boolean requestPermission(Activity activity) {
         // Assume thisActivity is the current activity
         if (ContextCompat.checkSelfPermission(activity,
                 Manifest.permission.WRITE_EXTERNAL_STORAGE)
@@ -74,6 +73,7 @@ public class ShooterEventListener implements SensorEventListener {
                 ActivityCompat.requestPermissions(activity,
                         new String[]{Manifest.permission.WRITE_EXTERNAL_STORAGE},
                         MY_PERMISSIONS_REQUEST_STORAGE);
+                return false;
             } else {
 
                 // No explanation needed, we can request the permission.
@@ -85,9 +85,10 @@ public class ShooterEventListener implements SensorEventListener {
                 // MY_PERMISSIONS_REQUEST_READ_CONTACTS is an
                 // app-defined int constant. The callback method gets the
                 // result of the request.
+                return false;
             }
         } else {
-            sensorManager.registerListener(this, sensor, UPDATE_TIME_FREQUENCY);
+            return true;
         }
     }
 
@@ -108,7 +109,7 @@ public class ShooterEventListener implements SensorEventListener {
 
                 if (speed > SHAKE_THRESHOLD) {
                     if (Tools.isScreenshot) {
-                        takeScreenshot();
+                        takeScreenshot(activity);
                         if (sensorManager != null)
                             sensorManager.unregisterListener(this);
                     }
@@ -125,7 +126,7 @@ public class ShooterEventListener implements SensorEventListener {
 
     }
 
-    private void takeScreenshot() {
+    public static void takeScreenshot(Activity activity) {
         Date now = new Date();
         android.text.format.DateFormat.format("yyyy-MM-dd_hh:mm:ss", now);
         try {
@@ -139,7 +140,7 @@ public class ShooterEventListener implements SensorEventListener {
             v1.setDrawingCacheEnabled(true);
             Bitmap bitmap = Bitmap.createBitmap(v1.getDrawingCache());
             //
-            bitmap = Bitmap.createBitmap(bitmap, 0, 40, bitmap.getWidth(), bitmap.getHeight() - 40);
+            bitmap = Bitmap.createBitmap(bitmap, 0, 0, bitmap.getWidth(), bitmap.getHeight());
             //
             v1.setDrawingCacheEnabled(false);
 
@@ -149,20 +150,20 @@ public class ShooterEventListener implements SensorEventListener {
             bitmap.compress(Bitmap.CompressFormat.JPEG, Tools.QUALITY, outputStream);
             outputStream.flush();
             outputStream.close();
-            openScreenshot(imageFile);
+            openScreenshot(imageFile, activity);
         } catch (Throwable e) {
             e.printStackTrace();
         }
     }
 
 
-    private void openScreenshot(File imageFile) {
+    private static void openScreenshot(File imageFile, Activity activity) {
         Intent intent = new Intent(activity, ShooterDrawingActivity.class);
         Uri uri = Uri.fromFile(imageFile);
         intent.putExtra(ShooterDrawingActivity.SCREEN_SHOT, uri.toString());
         intent.putExtra(ShooterDrawingActivity.SCREEN_SHOT_PATH, imageFile.getPath());
 
-        intent.putExtra(ShooterDrawingActivity.ACTIVITY_NAME, this.getClass().getName());
+        intent.putExtra(ShooterDrawingActivity.ACTIVITY_NAME, activity.getClass().getName());
         activity.startActivity(intent);
     }
 
@@ -175,7 +176,9 @@ public class ShooterEventListener implements SensorEventListener {
         if (Tools.isScreenshot) {
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M && !isPermissionGranted) {
                 //
-                requestPermission();
+                if (requestPermission(activity)) {
+                    sensorManager.registerListener(this, sensor, UPDATE_TIME_FREQUENCY);
+                }
                 //
             } else {
                 isPermissionGranted = true;

@@ -1,3 +1,8 @@
 <resources>
     <string name="app_name">Shooter</string>
+    <string name="describe_service">Welcome to our helper tool, you can draw over the screen to describe your problem and send it.</string>
+    <string name="start_drawing">Start Drawing</string>
+    <string name="clear">Clear</string>
+    <string name="draw">Draw</string>
+    <string name="send">Send</string>
 </resources>

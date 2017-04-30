@@ -7,7 +7,7 @@ import com.gardencoder.shooter.board.ShooterEventListener;
 
 
 public class ShooterAppCompactActivity extends AppCompatActivity {
-    private ShooterEventListener shooterEventListener;
+    public ShooterEventListener shooterEventListener;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {

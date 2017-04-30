@@ -22,7 +22,6 @@ import android.provider.MediaStore;
 import android.support.design.widget.FloatingActionButton;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Base64;
-import android.util.Log;
 import android.view.MotionEvent;
 import android.view.View;
 import android.widget.ImageButton;
@@ -46,7 +45,7 @@ public class ShooterDrawingActivity extends AppCompatActivity implements View.On
     public static final String SCREEN_SHOT = "screen_shot";
     public static final String ACTIVITY_NAME = "activity";
     public static final String SCREEN_SHOT_PATH = "path";
-    private FloatingActionButton redBtn, orangeBtn, greenBtn;
+    private FloatingActionButton orangeBtn;// redBtn, greenBtn;
     private LinearLayout drawLayout;
     private Paint mPaint;
     private DrawingView dv;
@@ -66,17 +65,17 @@ public class ShooterDrawingActivity extends AppCompatActivity implements View.On
         mProgressView = findViewById(R.id.progress);
         mLayout = findViewById(R.id.layout);
         drawLayout = (LinearLayout) findViewById(R.id.draw_layout);
-        redBtn = (FloatingActionButton) findViewById(R.id.red);
+        //redBtn = (FloatingActionButton) findViewById(R.id.red);
         orangeBtn = (FloatingActionButton) findViewById(R.id.orange);
-        greenBtn = (FloatingActionButton) findViewById(R.id.green);
-        greenBtn = (FloatingActionButton) findViewById(R.id.green);
+        //greenBtn = (FloatingActionButton) findViewById(R.id.green);
+        //greenBtn = (FloatingActionButton) findViewById(R.id.green);
         clearBtn = (FloatingActionButton) findViewById(R.id.clear);
         send = (FloatingActionButton) findViewById(R.id.send);
 
         //
-        redBtn.setOnClickListener(this);
+        //redBtn.setOnClickListener(this);
         orangeBtn.setOnClickListener(this);
-        greenBtn.setOnClickListener(this);
+        //greenBtn.setOnClickListener(this);
         clearBtn.setOnClickListener(this);
         send.setOnClickListener(this);
         //
@@ -88,10 +87,9 @@ public class ShooterDrawingActivity extends AppCompatActivity implements View.On
         mPaint.setStyle(Paint.Style.STROKE);
         mPaint.setStrokeJoin(Paint.Join.ROUND);
         mPaint.setStrokeCap(Paint.Cap.ROUND);
-        mPaint.setStrokeWidth(8);
-        mPaint.setColor(getResources().getColor(R.color.colorRed));
+        mPaint.setColor(getResources().getColor(R.color.colorOrange));
         mPaint.setXfermode(new PorterDuffXfermode(PorterDuff.Mode.SRC_OVER));
-        mPaint.setStrokeWidth(6);
+        mPaint.setStrokeWidth(3);
         //
         if (getIntent().getExtras() != null) {
             path = getIntent().getStringExtra(SCREEN_SHOT);
@@ -104,6 +102,9 @@ public class ShooterDrawingActivity extends AppCompatActivity implements View.On
             ((ImageView) findViewById(R.id.image)).setImageDrawable(d);
         }
         //
+
+        DescribeServiceFragment describeServiceFragment = new DescribeServiceFragment();
+        describeServiceFragment.show(getSupportFragmentManager(), DescribeServiceFragment.class.getName());
     }
 
     private String getRealPathFromURI(Uri contentURI) {
@@ -120,26 +121,29 @@ public class ShooterDrawingActivity extends AppCompatActivity implements View.On
     @Override
     public void onClick(View v) {
         int i = v.getId();
-        if (i == R.id.red) {
-            mPaint.setColor(getResources().getColor(R.color.colorRed));
-            mPaint.setXfermode(new PorterDuffXfermode(PorterDuff.Mode.SRC_OVER));
-            mPaint.setStrokeWidth(6);
-
-        } else if (i == R.id.orange) {
+//        if (i == R.id.red) {
+//            mPaint.setColor(getResources().getColor(R.color.colorRed));
+//            mPaint.setXfermode(new PorterDuffXfermode(PorterDuff.Mode.SRC_OVER));
+//            mPaint.setStrokeWidth(3);
+//
+//        }
+        if (i == R.id.orange) {
             mPaint.setColor(getResources().getColor(R.color.colorOrange));
             mPaint.setXfermode(new PorterDuffXfermode(PorterDuff.Mode.SRC_OVER));
-            mPaint.setStrokeWidth(6);
+            mPaint.setStrokeWidth(3);
 
-        } else if (i == R.id.green) {
-            mPaint.setColor(getResources().getColor(R.color.colorGreen));
-            mPaint.setXfermode(new PorterDuffXfermode(PorterDuff.Mode.SRC_OVER));
-            mPaint.setStrokeWidth(6);
-
-        } else if (i == R.id.clear) {
+        }
+//        else if (i == R.id.green) {
+//            mPaint.setColor(getResources().getColor(R.color.colorGreen));
+//            mPaint.setXfermode(new PorterDuffXfermode(PorterDuff.Mode.SRC_OVER));
+//            mPaint.setStrokeWidth(3);
+//
+//        }
+        else if (i == R.id.clear) {
             mPaint.setColor(Color.WHITE);
             mPaint.setAlpha(Color.WHITE);
             mPaint.setXfermode(new PorterDuffXfermode(PorterDuff.Mode.CLEAR));
-            mPaint.setStrokeWidth(20);
+            mPaint.setStrokeWidth(30);
 
         } else if (i == R.id.send) {
             mLayout.setDrawingCacheEnabled(true);
@@ -159,7 +163,7 @@ public class ShooterDrawingActivity extends AppCompatActivity implements View.On
                 outputStream.flush();
                 outputStream.close();
             } catch (Throwable e) {
-                Log.d("error", e.getMessage());
+                //Log.d("error", e.getMessage());
             }
             new ImageBase64(Tools.QUALITY, pathStr).execute(bitmap);
         }
@@ -350,7 +354,7 @@ public class ShooterDrawingActivity extends AppCompatActivity implements View.On
         }
     }
 
-    class ImageBase64 extends AsyncTask<Bitmap, Integer, String> {
+    private class ImageBase64 extends AsyncTask<Bitmap, Integer, String> {
         private final String path;
         private int quality;
 
@@ -382,9 +386,8 @@ public class ShooterDrawingActivity extends AppCompatActivity implements View.On
                 } catch (IOException e) {
                     e.printStackTrace();
                 }
-                String imageEncoded = Base64.encodeToString(b, Base64.DEFAULT);
 
-                return imageEncoded;
+                return Base64.encodeToString(b, Base64.DEFAULT);
             } else {
                 return null;
             }
