@@ -1,8 +1,4 @@
 apply plugin: 'com.android.library'
-apply plugin: 'com.jfrog.bintray'
-apply plugin: 'com.github.dcendents.android-maven'
-group = 'com.gardencoder.shooter'
-version = '1.0.2'
 android {
     lintOptions {
         disable 'RestrictedApi'
@@ -34,51 +30,8 @@ dependencies {
     androidTestCompile('com.android.support.test.espresso:espresso-core:2.2.2', {
         exclude group: 'com.android.support', module: 'support-annotations'
     })
+    compile 'com.android.support:support-v4:25.3.1'
     compile 'com.android.support:appcompat-v7:25.3.1'
     testCompile 'junit:junit:4.12'
     compile 'com.android.support:design:25.3.1'
-}
-
-task generateSourcesJar(type: Jar) {
-    from android.sourceSets.main.java.srcDirs
-    classifier 'sources'
-}
-
-task generateJavadocs(type: Javadoc) {
-    source = android.sourceSets.main.java.srcDirs
-    classpath += project.files(android.getBootClasspath()
-            .join(File.pathSeparator))
-}
-
-task generateJavadocsJar(type: Jar) {
-    from generateJavadocs.destinationDir
-    classifier 'javadoc'
-}
-
-generateJavadocsJar.dependsOn generateJavadocs
-
-artifacts {
-    archives generateJavadocsJar
-    archives generateSourcesJar
-}
-bintray {
-    user = 'gardencoder'
-    key = '4c7ff9fde89a9e976bf6cf8a4cc29c599e23e9a1'
-    pkg {
-        repo = 'Shooter'
-        name = 'library' // the name of the package in BinTray
-        userOrg = 'gardencode'
-
-        version {
-            name = 'Library' // the name of your library project
-            desc = 'Screenshot simple library'
-            released = new Date()
-            vcsTag = '1.0.2' // the version
-        }
-
-        licenses = ['Apache-2.0']
-        vcsUrl = 'https://github.com/Gardencoder/Shooter.git'
-        websiteUrl = 'https://github.com/Gardencoder/Shooter'
-    }
-    configurations = ['archives']
 }
