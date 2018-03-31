@@ -4,10 +4,6 @@ import android.util.Log;
 
 import static com.gardencoder.shooter.utilites.Tools.isDebugEnabled;
 
-/**
- * Created by Ramy on 11/12/16.
- */
-
 public class Debug {
 
 

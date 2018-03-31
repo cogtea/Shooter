@@ -1,10 +1,8 @@
 package com.gardencoder.shooter.models;
 
-/**
- * Created by Ramy on 11/12/16.
- */
-
 public class ShooterModel {
+
+    public final static String PNG = "png";
     private String photo;
     private String path;
     private String device_name;

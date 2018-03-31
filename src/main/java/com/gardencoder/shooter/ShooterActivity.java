@@ -2,6 +2,7 @@ package com.gardencoder.shooter;
 
 import android.app.Activity;
 import android.os.Bundle;
+import android.support.annotation.NonNull;
 
 import com.gardencoder.shooter.board.ShooterEventListener;
 
@@ -29,7 +30,7 @@ public class ShooterActivity extends Activity {
 
     @Override
     public void onRequestPermissionsResult(int requestCode,
-                                           String permissions[], int[] grantResults) {
-        shooterEventListener.onRequestPermissionsResult(requestCode, permissions, grantResults);
+                                           @NonNull String permissions[], @NonNull int[] grantResults) {
+        shooterEventListener.onRequestPermissionsResult(requestCode, grantResults);
     }
 }

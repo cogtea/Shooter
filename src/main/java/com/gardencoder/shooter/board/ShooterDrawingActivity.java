@@ -2,12 +2,12 @@ package com.gardencoder.shooter.board;
 
 import android.animation.Animator;
 import android.animation.AnimatorListenerAdapter;
+import android.annotation.SuppressLint;
 import android.annotation.TargetApi;
 import android.content.Context;
 import android.database.Cursor;
 import android.graphics.Bitmap;
 import android.graphics.Canvas;
-import android.graphics.Color;
 import android.graphics.Matrix;
 import android.graphics.Paint;
 import android.graphics.Path;
@@ -45,14 +45,9 @@ public class ShooterDrawingActivity extends AppCompatActivity implements View.On
     public static final String SCREEN_SHOT = "screen_shot";
     public static final String ACTIVITY_NAME = "activity";
     public static final String SCREEN_SHOT_PATH = "path";
-    private FloatingActionButton orangeBtn;// redBtn, greenBtn;
-    private LinearLayout drawLayout;
     private Paint mPaint;
-    private DrawingView dv;
-    private ImageButton clearBtn;
     private View mProgressView;
     private View mLayout;
-    private FloatingActionButton send;
     private String activtyName;
     private String path = "";
     private String pathStr;
@@ -61,25 +56,19 @@ public class ShooterDrawingActivity extends AppCompatActivity implements View.On
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_shooter);
-        //
+
         mProgressView = findViewById(R.id.progress);
         mLayout = findViewById(R.id.layout);
-        drawLayout = (LinearLayout) findViewById(R.id.draw_layout);
-        //redBtn = (FloatingActionButton) findViewById(R.id.red);
-        orangeBtn = (FloatingActionButton) findViewById(R.id.orange);
-        //greenBtn = (FloatingActionButton) findViewById(R.id.green);
-        //greenBtn = (FloatingActionButton) findViewById(R.id.green);
-        clearBtn = (FloatingActionButton) findViewById(R.id.clear);
-        send = (FloatingActionButton) findViewById(R.id.send);
+        LinearLayout drawLayout = findViewById(R.id.draw_layout);
+        FloatingActionButton orangeBtn = findViewById(R.id.orange);
+        ImageButton clearBtn = findViewById(R.id.clear);
+        FloatingActionButton send = findViewById(R.id.send);
 
-        //
-        //redBtn.setOnClickListener(this);
         orangeBtn.setOnClickListener(this);
-        //greenBtn.setOnClickListener(this);
         clearBtn.setOnClickListener(this);
         send.setOnClickListener(this);
-        //
-        dv = new DrawingView(this);
+
+        DrawingView dv = new DrawingView(this);
         drawLayout.addView(dv);
         mPaint = new Paint();
         mPaint.setAntiAlias(true);
@@ -90,7 +79,7 @@ public class ShooterDrawingActivity extends AppCompatActivity implements View.On
         mPaint.setColor(getResources().getColor(R.color.colorOrange));
         mPaint.setXfermode(new PorterDuffXfermode(PorterDuff.Mode.SRC_OVER));
         mPaint.setStrokeWidth(3);
-        //
+
         if (getIntent().getExtras() != null) {
             path = getIntent().getStringExtra(SCREEN_SHOT);
             pathStr = getIntent().getStringExtra(SCREEN_SHOT_PATH);
@@ -101,60 +90,41 @@ public class ShooterDrawingActivity extends AppCompatActivity implements View.On
             Drawable d = Drawable.createFromPath(f.getAbsolutePath());
             ((ImageView) findViewById(R.id.image)).setImageDrawable(d);
         }
-        //
-
-        DescribeServiceFragment describeServiceFragment = new DescribeServiceFragment();
-        describeServiceFragment.show(getSupportFragmentManager(), DescribeServiceFragment.class.getName());
     }
 
     private String getRealPathFromURI(Uri contentURI) {
         Cursor cursor = getContentResolver().query(contentURI, null, null, null, null);
+        String realPath;
         if (cursor == null) {
-            return contentURI.getPath();
+            realPath = contentURI.getPath();
         } else {
             cursor.moveToFirst();
             int idx = cursor.getColumnIndex(MediaStore.Images.ImageColumns.DATA);
-            return cursor.getString(idx);
+            realPath = cursor.getString(idx);
+            cursor.close();
         }
+        return realPath;
     }
 
     @Override
     public void onClick(View v) {
         int i = v.getId();
-//        if (i == R.id.red) {
-//            mPaint.setColor(getResources().getColor(R.color.colorRed));
-//            mPaint.setXfermode(new PorterDuffXfermode(PorterDuff.Mode.SRC_OVER));
-//            mPaint.setStrokeWidth(3);
-//
-//        }
         if (i == R.id.orange) {
             mPaint.setColor(getResources().getColor(R.color.colorOrange));
             mPaint.setXfermode(new PorterDuffXfermode(PorterDuff.Mode.SRC_OVER));
             mPaint.setStrokeWidth(3);
-
-        }
-//        else if (i == R.id.green) {
-//            mPaint.setColor(getResources().getColor(R.color.colorGreen));
-//            mPaint.setXfermode(new PorterDuffXfermode(PorterDuff.Mode.SRC_OVER));
-//            mPaint.setStrokeWidth(3);
-//
-//        }
-        else if (i == R.id.clear) {
-            mPaint.setColor(Color.WHITE);
-            mPaint.setAlpha(Color.WHITE);
+        } else if (i == R.id.clear) {
+            mPaint.setColor(getResources().getColor(R.color.colorPrimary));
             mPaint.setXfermode(new PorterDuffXfermode(PorterDuff.Mode.CLEAR));
             mPaint.setStrokeWidth(30);
-
         } else if (i == R.id.send) {
             mLayout.setDrawingCacheEnabled(true);
             Bitmap bitmap = Bitmap.createBitmap(mLayout.getDrawingCache());
             try {
-                // create bitmap screen capture
+
                 View v1 = getWindow().getDecorView().getRootView();
                 v1.setDrawingCacheEnabled(true);
-                //
                 bitmap = Bitmap.createBitmap(bitmap, 0, 0, bitmap.getWidth(), bitmap.getHeight());
-                //
                 v1.setDrawingCacheEnabled(false);
                 Uri uri = Uri.parse(path);
                 File imageFile = new File(getRealPathFromURI(uri));
@@ -163,9 +133,14 @@ public class ShooterDrawingActivity extends AppCompatActivity implements View.On
                 outputStream.flush();
                 outputStream.close();
             } catch (Throwable e) {
-                //Log.d("error", e.getMessage());
+                Debug.d(ShooterDrawingActivity.class.getName(), e.getMessage());
             }
-            new ImageBase64(Tools.QUALITY, pathStr).execute(bitmap);
+            new ImageBase64(Tools.QUALITY, pathStr, new ImageBase64.ImageBase64Interface() {
+                @Override
+                public void onPostExecute(String imageFileName, String path) {
+                    sendScreenshot(imageFileName, path);
+                }
+            }).execute(bitmap);
         }
     }
 
@@ -177,47 +152,36 @@ public class ShooterDrawingActivity extends AppCompatActivity implements View.On
         screenShotModel.setDevice_name(getDeviceName());
         screenShotModel.setPath(path);
         screenShotModel.setPhoto(ImageFileName);
-        screenShotModel.setPhoto_extension("png");
+        screenShotModel.setPhoto_extension(ShooterModel.PNG);
 
         if (Shooter.sendScreenshot(screenShotModel)) {
             Debug.d(ShooterDrawingActivity.class.getName(), "Sending screenshot is successful");
+            showProgress(false);
             finish();
         }
     }
 
     @TargetApi(Build.VERSION_CODES.HONEYCOMB_MR2)
     private void showProgress(final boolean show) {
-        // On Honeycomb MR2 we have the ViewPropertyAnimator APIs, which allow
-        // for very easy animations. If available, use these APIs to fade-in
-        // the progress spinner.
-        //
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.HONEYCOMB_MR2) {
-            int shortAnimTime = getResources().getInteger(android.R.integer.config_shortAnimTime);
+        int shortAnimTime = getResources().getInteger(android.R.integer.config_shortAnimTime);
 
-            mLayout.setVisibility(show ? View.INVISIBLE : View.VISIBLE);
-            mLayout.animate().setDuration(shortAnimTime).alpha(
-                    show ? 0 : 1).setListener(new AnimatorListenerAdapter() {
-                @Override
-                public void onAnimationEnd(Animator animation) {
-                    mLayout.setVisibility(show ? View.INVISIBLE : View.VISIBLE);
-                }
-            });
+        mLayout.setVisibility(show ? View.INVISIBLE : View.VISIBLE);
+        mLayout.animate().setDuration(shortAnimTime).alpha(
+                show ? 0 : 1).setListener(new AnimatorListenerAdapter() {
+            @Override
+            public void onAnimationEnd(Animator animation) {
+                mLayout.setVisibility(show ? View.INVISIBLE : View.VISIBLE);
+            }
+        });
 
-            mProgressView.setVisibility(show ? View.VISIBLE : View.GONE);
-            mProgressView.animate().setDuration(shortAnimTime).alpha(
-                    show ? 1 : 0).setListener(new AnimatorListenerAdapter() {
-                @Override
-                public void onAnimationEnd(Animator animation) {
-                    mProgressView.setVisibility(show ? View.VISIBLE : View.GONE);
-                }
-            });
-        } else {
-            // The ViewPropertyAnimator APIs are not available, so simply show
-            // and hide the relevant UI components.
-            mProgressView.setVisibility(show ? View.VISIBLE : View.GONE);
-            mLayout.setVisibility(show ? View.INVISIBLE : View.VISIBLE);
-        }
-        //
+        mProgressView.setVisibility(show ? View.VISIBLE : View.GONE);
+        mProgressView.animate().setDuration(shortAnimTime).alpha(
+                show ? 1 : 0).setListener(new AnimatorListenerAdapter() {
+            @Override
+            public void onAnimationEnd(Animator animation) {
+                mProgressView.setVisibility(show ? View.VISIBLE : View.GONE);
+            }
+        });
     }
 
     public String getDeviceName() {
@@ -262,7 +226,6 @@ public class ShooterDrawingActivity extends AppCompatActivity implements View.On
     public class DrawingView extends View {
 
         private static final float TOUCH_TOLERANCE = 4;
-        public int width;
         public int height;
         Context context;
         private Bitmap mBitmap;
@@ -325,12 +288,11 @@ public class ShooterDrawingActivity extends AppCompatActivity implements View.On
         private void touch_up() {
             mPath.lineTo(mX, mY);
             circlePath.reset();
-            // commit the path to our offscreen
             mCanvas.drawPath(mPath, mPaint);
-            // kill this so we don't double draw
             mPath.reset();
         }
 
+        @SuppressLint("ClickableViewAccessibility")
         @Override
         public boolean onTouchEvent(MotionEvent event) {
             float x = event.getX();
@@ -354,19 +316,15 @@ public class ShooterDrawingActivity extends AppCompatActivity implements View.On
         }
     }
 
-    private class ImageBase64 extends AsyncTask<Bitmap, Integer, String> {
+    private static class ImageBase64 extends AsyncTask<Bitmap, Integer, String> {
         private final String path;
+        private final ImageBase64Interface imageBase64Interface;
         private int quality;
 
-        ImageBase64(int quality, String path) {
+        ImageBase64(int quality, String path, ImageBase64Interface imageBase64Interface) {
             this.quality = quality;
             this.path = path;
-        }
-
-        @Override
-        protected void onPreExecute() {
-            super.onPreExecute();
-            // Get the dimensions of the View
+            this.imageBase64Interface = imageBase64Interface;
         }
 
         @Override
@@ -376,8 +334,6 @@ public class ShooterDrawingActivity extends AppCompatActivity implements View.On
                 Matrix rotMatrix = new Matrix();
 
                 params[0] = Bitmap.createBitmap(params[0], 0, 0, params[0].getWidth(), params[0].getHeight(), rotMatrix, true);
-
-                //}
                 ByteArrayOutputStream baos = new ByteArrayOutputStream();
                 params[0].compress(Bitmap.CompressFormat.JPEG, quality, baos);
                 byte[] b = baos.toByteArray();
@@ -394,9 +350,13 @@ public class ShooterDrawingActivity extends AppCompatActivity implements View.On
         }
 
         @Override
-        protected void onPostExecute(String ImageFileName) {
-            super.onPostExecute(ImageFileName);
-            sendScreenshot(ImageFileName, path);
+        protected void onPostExecute(String imageFileName) {
+            super.onPostExecute(imageFileName);
+            imageBase64Interface.onPostExecute(imageFileName, path);
+        }
+
+        public interface ImageBase64Interface {
+            void onPostExecute(String ImageFileName, String path);
         }
     }
 }

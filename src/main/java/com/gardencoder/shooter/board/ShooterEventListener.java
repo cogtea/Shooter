@@ -15,6 +15,7 @@ import android.support.v4.app.ActivityCompat;
 import android.support.v4.content.ContextCompat;
 import android.view.View;
 
+import com.gardencoder.shooter.utilites.Debug;
 import com.gardencoder.shooter.utilites.Tools;
 
 import java.io.File;
@@ -27,24 +28,22 @@ import static android.content.Context.SENSOR_SERVICE;
 public class ShooterEventListener implements SensorEventListener {
     private static final int UPDATE_TIME_FREQUENCY = 100;
     private static final int SHAKE_THRESHOLD = 2000;
-    public static final int MY_PERMISSIONS_REQUEST_STORAGE = 4010;
+    private static final int MY_PERMISSIONS_REQUEST_STORAGE = 4010;
     private final Sensor sensor;
     private SensorManager sensorManager;
     private long lastUpdate;
-    private float x, y, z;
     private float last_x, last_y, last_z;
     private Activity activity;
-    public boolean isPermissionGranted = false;
+    private boolean isPermissionGranted = false;
 
     public ShooterEventListener(Activity activity) {
         this.activity = activity;
         sensorManager = (SensorManager) activity.getSystemService(SENSOR_SERVICE);
-        sensor = sensorManager.getDefaultSensor(Sensor.TYPE_ACCELEROMETER);
+        sensor = sensorManager != null ? sensorManager.getDefaultSensor(Sensor.TYPE_ACCELEROMETER) : null;
 
     }
 
-    public void onRequestPermissionsResult(int requestCode,
-                                           String permissions[], int[] grantResults) {
+    public void onRequestPermissionsResult(int requestCode, int[] grantResults) {
         switch (requestCode) {
             case MY_PERMISSIONS_REQUEST_STORAGE: {
                 // If request is cancelled, the result arrays are empty.
@@ -57,7 +56,7 @@ public class ShooterEventListener implements SensorEventListener {
         }
     }
 
-    public static boolean requestPermission(Activity activity) {
+    private static boolean requestPermission(Activity activity) {
         // Assume thisActivity is the current activity
         if (ContextCompat.checkSelfPermission(activity,
                 Manifest.permission.WRITE_EXTERNAL_STORAGE)
@@ -101,9 +100,9 @@ public class ShooterEventListener implements SensorEventListener {
                 lastUpdate = curTime;
 
                 float[] values = sensorEvent.values;
-                x = values[0];
-                y = values[1];
-                z = values[2];
+                float x = values[0];
+                float y = values[1];
+                float z = values[2];
 
                 float speed = Math.abs(x + y + z - last_x - last_y - last_z) / diffTime * 10000;
 
@@ -126,13 +125,16 @@ public class ShooterEventListener implements SensorEventListener {
 
     }
 
-    public static void takeScreenshot(Activity activity) {
+    private static void takeScreenshot(Activity activity) {
         Date now = new Date();
         android.text.format.DateFormat.format("yyyy-MM-dd_hh:mm:ss", now);
         try {
             File screensDir = new File(activity.getFilesDir().toString() + "/screenshots/");
             if (!screensDir.exists()) {
-                screensDir.mkdir();
+                if (screensDir.mkdir()) {
+                    Debug.e(ShooterEventListener.class.getName(), "Fail to create screen shoots folder.");
+                    return;
+                }
             }
             //
             String mPath = activity.getFilesDir().toString() + "/screenshots/" + now + ".jpg";
@@ -175,16 +177,14 @@ public class ShooterEventListener implements SensorEventListener {
     public void onResume() {
         if (Tools.isScreenshot) {
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M && !isPermissionGranted) {
-                //
                 if (requestPermission(activity)) {
                     sensorManager.registerListener(this, sensor, UPDATE_TIME_FREQUENCY);
                 }
-                //
+
             } else {
                 isPermissionGranted = true;
                 sensorManager.registerListener(this, sensor, UPDATE_TIME_FREQUENCY);
             }
-            //
         }
     }
 }

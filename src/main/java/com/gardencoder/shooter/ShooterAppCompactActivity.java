@@ -1,21 +1,20 @@
 package com.gardencoder.shooter;
 
 import android.os.Bundle;
+import android.support.annotation.NonNull;
 import android.support.v7.app.AppCompatActivity;
 
 import com.gardencoder.shooter.board.ShooterEventListener;
 
 
-public abstract class ShooterAppCompactActivity extends AppCompatActivity {
+public class ShooterAppCompactActivity extends AppCompatActivity {
     public ShooterEventListener shooterEventListener;
 
-    public abstract boolean isEnabled();
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        if (isEnabled())
-            shooterEventListener = new ShooterEventListener(this);
+        shooterEventListener = new ShooterEventListener(this);
     }
 
     @Override
@@ -34,8 +33,8 @@ public abstract class ShooterAppCompactActivity extends AppCompatActivity {
 
     @Override
     public void onRequestPermissionsResult(int requestCode,
-                                           String permissions[], int[] grantResults) {
+                                           @NonNull String permissions[], @NonNull int[] grantResults) {
         if (shooterEventListener != null)
-            shooterEventListener.onRequestPermissionsResult(requestCode, permissions, grantResults);
+            shooterEventListener.onRequestPermissionsResult(requestCode, grantResults);
     }
 }
