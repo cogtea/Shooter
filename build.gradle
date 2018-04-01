@@ -1,16 +1,35 @@
-apply plugin: 'com.android.library'
-android {
-    lintOptions {
-        disable 'RestrictedApi'
+buildscript {
+    repositories {
+        google()
+        mavenCentral()
+        maven {
+            url "https://plugins.gradle.org/m2/"
+        }
     }
+    dependencies {
+        classpath 'com.android.tools.build:gradle:3.1.0'
+        classpath "com.jfrog.bintray.gradle:gradle-bintray-plugin:1.8.0"
+        classpath 'com.github.dcendents:android-maven-gradle-plugin:2.0'
+    }
+}
+
+apply plugin: 'com.android.library'
+apply plugin: 'com.jfrog.bintray'
+apply plugin: 'com.github.dcendents.android-maven'
+
+version = '1.0.2'
+android {
     compileSdkVersion 27
-    buildToolsVersion '27.0.3'
+    buildToolsVersion "27.0.3"
 
     defaultConfig {
-        minSdkVersion 14
+        minSdkVersion 11
         targetSdkVersion 27
-        versionCode 1
-        versionName "1.0.1"
+        versionCode 3
+        versionName version
+
+        testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
+
     }
     buildTypes {
         release {
@@ -23,7 +42,52 @@ android {
 
 
 dependencies {
-    compile fileTree(dir: 'libs', include: ['*.jar'])
-    compile 'com.android.support:appcompat-v7:27.1.0'
-    compile 'com.android.support:design:27.1.0'
+    implementation fileTree(dir: 'libs', include: ['*.jar'])
+    implementation 'com.android.support:appcompat-v7:27.1.0'
+    implementation 'com.android.support:design:27.1.0'
+}
+
+task generateSourcesJar(type: Jar) {
+    from android.sourceSets.main.java.srcDirs
+    classifier 'sources'
+}
+
+task generateJavadocs(type: Javadoc) {
+    source = android.sourceSets.main.java.srcDirs
+    classpath = project.files(android.getBootClasspath()
+            .join(File.pathSeparator))
+}
+
+task generateJavadocsJar(type: Jar) {
+    from generateJavadocs.destinationDir
+    classifier 'javadoc'
+}
+
+generateJavadocsJar.dependsOn generateJavadocs
+
+artifacts {
+    archives generateJavadocsJar
+    archives generateSourcesJar
+}
+bintray {
+    user = 'gardencoder'
+    key = ''
+    pkg {
+        repo = 'Shooter'
+        name = 'library'
+        version {
+            name = 'Shooter'
+            desc = 'Screenshot simple library'
+            released = new Date()
+            vcsTag = version
+        }
+
+        licenses = ['Apache-2.0']
+        vcsUrl = 'https://github.com/Gardencoder/Shooter.git'
+        websiteUrl = 'https://github.com/Gardencoder/Shooter'
+    }
+    configurations = ['archives']
+}
+repositories {
+    google()
 }
