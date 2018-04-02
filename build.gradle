@@ -39,55 +39,118 @@ android {
     }
 }
 
-
-
 dependencies {
     implementation fileTree(dir: 'libs', include: ['*.jar'])
     implementation 'com.android.support:appcompat-v7:27.1.0'
     implementation 'com.android.support:design:27.1.0'
+    implementation 'com.android.support:support-annotations:27.1.0'
 }
 
-task generateSourcesJar(type: Jar) {
+ext {
+    bintrayRepo = 'Shooter'
+    bintrayName = 'Shooter'
+
+    publishedGroupId = 'com.gardencoder.shooter'
+    libraryName = 'Shooter'
+    artifact = 'Shooter'
+
+    libraryDescription = 'Simple screenshot library'
+
+    siteUrl = 'https://github.com/Gardencoder/Shooter'
+    gitUrl = 'https://github.com/Gardencoder/Shooter.git'
+
+    libraryVersion = version
+
+    developerId = 'gardencoder'
+    developerName = 'Ramy Sabry'
+    developerEmail = 'ramyatgaren@gmail.com'
+
+    licenseName = 'The Apache Software License, Version 2.0'
+    licenseUrl = 'http://www.apache.org/licenses/LICENSE-2.0.txt'
+    allLicenses = ["Apache-2.0"]
+}
+
+group = publishedGroupId
+version = libraryVersion
+
+install {
+    repositories.mavenInstaller {
+        pom.project {
+            packaging 'aar'
+            groupId publishedGroupId
+            artifactId artifact
+
+            name libraryName
+            description libraryDescription
+            url siteUrl
+
+            licenses {
+                license {
+                    name licenseName
+                    url licenseUrl
+                }
+            }
+            developers {
+                developer {
+                    id developerId
+                    name developerName
+                    email developerEmail
+                }
+            }
+            scm {
+                connection gitUrl
+                developerConnection gitUrl
+                url siteUrl
+            }
+        }
+    }
+}
+
+task sourcesJar(type: Jar) {
+    classifier = 'sources'
     from android.sourceSets.main.java.srcDirs
-    classifier 'sources'
 }
 
-task generateJavadocs(type: Javadoc) {
+task javadoc(type: Javadoc) {
     source = android.sourceSets.main.java.srcDirs
-    classpath = project.files(android.getBootClasspath()
-            .join(File.pathSeparator))
+    classpath += project.files(android.getBootClasspath().join(File.pathSeparator))
 }
 
-task generateJavadocsJar(type: Jar) {
-    from generateJavadocs.destinationDir
-    classifier 'javadoc'
+task javadocJar(type: Jar, dependsOn: javadoc) {
+    classifier = 'javadoc'
+    from javadoc.destinationDir
 }
-
-generateJavadocsJar.dependsOn generateJavadocs
 
 artifacts {
-    archives generateJavadocsJar
-    archives generateSourcesJar
+    archives javadocJar
+    archives sourcesJar
 }
-bintray {
-    user = 'gardencoder'
-    key = ''
-    pkg {
-        repo = 'Shooter'
-        name = 'library'
-        version {
-            name = 'Shooter'
-            desc = 'Screenshot simple library'
-            released = new Date()
-            vcsTag = version
-        }
 
-        licenses = ['Apache-2.0']
-        vcsUrl = 'https://github.com/Gardencoder/Shooter.git'
-        websiteUrl = 'https://github.com/Gardencoder/Shooter'
-    }
+Properties properties = new Properties()
+properties.load(project.rootProject.file('local.properties').newDataInputStream())
+
+bintray {
+    user = properties.getProperty("bintray.user")
+    key = properties.getProperty("bintray.apikey")
+
     configurations = ['archives']
+    pkg {
+        repo = bintrayRepo
+        name = bintrayName
+        desc = libraryDescription
+        websiteUrl = siteUrl
+        vcsUrl = gitUrl
+        licenses = allLicenses
+        dryRun = false
+        publish = true
+        override = false
+        publicDownloadNumbers = true
+        version {
+            desc = libraryDescription
+        }
+    }
 }
+
 repositories {
     google()
 }
