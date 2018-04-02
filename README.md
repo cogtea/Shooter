@@ -54,7 +54,8 @@ public class MyApplication extends Application implements ConnectionHub {
         Debug.d(getClass().getName(), shooterModel.getPhoto());
         return true;
     }
-}```
+}
+```
 
 - Now in your activity extends instead of `AppCompatActivity` , use `ShooterAppCompactActivity` .
 - Add Storage Permission  `<uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />` to your manifest .
