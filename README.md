@@ -67,7 +67,7 @@ public class MyApplication extends Application implements ConnectionHub {
 - you can get Uri of image with such away `Uri uri = Uri.parse(shooterModel.getPath())`;
 
 ### Example
-<img src="https://github.com/gardencoder/shooter/raw/master/screenshot/img1.png" width="300px" height="532px" />
+<img src="https://github.com/cogtea/shooter/raw/master/screenshot/img1.png" width="300px" height="532px" />
 
 Android API 24 <a href="https://developer.android.com/reference/android/support/v4/content/FileProvider.html">File Provider</a>
 --------
